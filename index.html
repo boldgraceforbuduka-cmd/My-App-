@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adaptive Learning MVP</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Adaptive Learning MVP</p>
+          <h1>Learning that adapts to the learner</h1>
+        </div>
+        <div class="topbar-actions">
+          <button id="contrast-toggle" class="secondary-btn">High Contrast: Off</button>
+          <button id="profile-button" class="secondary-btn">Profile</button>
+        </div>
+      </header>
+
+      <main>
+        <section id="welcome-screen" class="screen active">
+          <div class="card hero-card">
+            <h2>Welcome</h2>
+            <p>Start with a guest profile and explore a lesson experience designed for different learners.</p>
+            <button id="guest-button" class="primary-btn">Continue as Guest</button>
+            <p class="small-copy">No login required. Your preferences are stored locally on this device.</p>
+          </div>
+        </section>
+
+        <section id="profile-screen" class="screen">
+          <div class="card">
+            <h2>Learner Profile</h2>
+            <p class="small-copy">This profile sets the default lesson format and assistive tools.</p>
+
+            <form id="profile-form">
+              <fieldset>
+                <legend>Question 1: I like...</legend>
+                <label><input type="radio" name="preference" value="Reading" /> Reading</label>
+                <label><input type="radio" name="preference" value="Listening" /> Listening</label>
+                <label><input type="radio" name="preference" value="Pictures" /> Pictures</label>
+              </fieldset>
+
+              <fieldset>
+                <legend>Question 2: I get distracted...</legend>
+                <label><input type="radio" name="distraction" value="Often" /> Often</label>
+                <label><input type="radio" name="distraction" value="Sometimes" /> Sometimes</label>
+                <label><input type="radio" name="distraction" value="Rarely" /> Rarely</label>
+              </fieldset>
+
+              <button type="submit" class="primary-btn">Save Profile</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="dashboard-screen" class="screen">
+          <div class="card">
+            <h2>Dashboard</h2>
+            <div class="lesson-card">
+              <div>
+                <p class="eyebrow">Today's Lesson</p>
+                <h3>Fractions Made Simple</h3>
+                <p>Continue your last lesson or restart with the default format.</p>
+              </div>
+              <div class="row-stack">
+                <div class="pill">Lesson 2 of 5</div>
+                <button id="continue-lesson-btn" class="primary-btn">Continue Learning</button>
+              </div>
+            </div>
+            <div id="dashboard-summary" class="summary-box"></div>
+          </div>
+        </section>
+
+        <section id="lesson-screen" class="screen">
+          <div class="card">
+            <div class="lesson-header">
+              <div>
+                <p class="eyebrow">Lesson</p>
+                <h2>Fractions Made Simple</h2>
+              </div>
+              <button id="back-to-dashboard" class="secondary-btn">Back to Dashboard</button>
+            </div>
+
+            <div class="toolbar">
+              <div class="format-switcher">
+                <span>Format</span>
+                <button data-format="A" class="chip-btn">A</button>
+                <button data-format="B" class="chip-btn">B</button>
+                <button data-format="C" class="chip-btn">C</button>
+              </div>
+              <div class="tool-controls">
+                <label class="toggle-row"><input id="tts-toggle" type="checkbox" /> Text-to-Speech</label>
+                <label class="toggle-row"><input id="timer-toggle" type="checkbox" /> Visual Timer</label>
+              </div>
+            </div>
+
+            <div class="lesson-layout">
+              <article id="lesson-content" class="lesson-content"></article>
+              <aside class="side-panel">
+                <div class="helper-card">
+                  <h3>Assistive Tools</h3>
+                  <p id="assistive-summary">Your profile defaults will appear here.</p>
+                  <label class="range-row">
+                    Timer duration (seconds)
+                    <input id="timer-duration" type="range" min="20" max="90" step="10" value="45" />
+                    <span id="timer-duration-value">45</span>
+                  </label>
+                  <div id="timer-status" class="timer-status">Timer off</div>
+                  <button id="read-aloud-btn" class="secondary-btn">Read Aloud</button>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
