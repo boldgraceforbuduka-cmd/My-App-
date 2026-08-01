@@ -117,9 +117,9 @@ function render() {
   const profile = loadProfile();
   appState.profile = profile || appState.profile;
 
-  if (!appState.profile) {
+  if (!appState.profile && appState.currentScreen !== 'profile') {
     setScreen('welcome');
-  } else if (appState.currentScreen === 'welcome') {
+  } else if (appState.profile && appState.currentScreen === 'welcome') {
     setScreen('dashboard');
   }
 
