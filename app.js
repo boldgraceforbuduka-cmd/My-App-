@@ -50,18 +50,19 @@ const defaultState = {
     timerRemaining: 45,
   },
   timerIntervalId: null,
+  theme: 'light',
 };
 
-let appState = loadState();
+let appState;
 
 function loadState() {
   try {
     const saved = localStorage.getItem(STORAGE_KEYS.state);
     const parsed = saved ? JSON.parse(saved) : null;
-    return parsed ? { ...defaultState, ...parsed, settings: { ...defaultState.settings, ...(parsed.settings || {}) } } : structuredClone(defaultState);
+    return parsed ? { ...defaultState, ...parsed, settings: { ...defaultState.settings, ...(parsed.settings || {}) } } : JSON.parse(JSON.stringify(defaultState));
   } catch (error) {
     console.warn('Could not load state', error);
-    return structuredClone(defaultState);
+    return JSON.parse(JSON.stringify(defaultState));
   }
 }
 
@@ -81,6 +82,38 @@ function loadProfile() {
     console.warn('Could not load profile', error);
     return null;
   }
+}
+
+function showToast(message, type = 'default') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = `toast ${type === 'success' ? 'success' : ''}`.trim();
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(12px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+function updateTopbar(scrollY = window.scrollY) {
+  const topbar = document.querySelector('.topbar');
+  if (!topbar) return;
+  topbar.classList.toggle('scrolled', scrollY > 10);
+}
+
+function initCardAnimations() {
+  document.querySelectorAll('.card').forEach((card, index) => {
+    setTimeout(() => card.classList.add('visible'), 80 * index);
+  });
+}
+
+function setTheme(theme) {
+  appState.theme = theme;
+  saveState();
+  render();
 }
 
 function setScreen(screenName) {
@@ -124,7 +157,8 @@ function render() {
   }
 
   document.body.classList.toggle('high-contrast', appState.settings.highContrast);
-  document.getElementById('contrast-toggle').textContent = `High Contrast: ${appState.settings.highContrast ? 'On' : 'Off'}`;
+  document.body.classList.toggle('dark-mode', appState.theme === 'dark');
+  document.getElementById('theme-toggle').textContent = `Theme: ${appState.theme === 'dark' ? 'Dark' : 'Light'}`;
   document.getElementById('tts-toggle').checked = appState.settings.ttsEnabled;
   document.getElementById('timer-toggle').checked = appState.settings.timerEnabled;
   document.getElementById('timer-duration').value = appState.settings.timerDuration;
@@ -209,6 +243,10 @@ function readAloud() {
 }
 
 function bindEvents() {
+  if (!document.getElementById('guest-button')) {
+    console.error('Missing guest-button element');
+    return;
+  }
   document.getElementById('guest-button').addEventListener('click', () => {
     setScreen('profile');
     render();
@@ -224,7 +262,7 @@ function bindEvents() {
     };
 
     if (!profile.preference || !profile.distraction) {
-      alert('Please complete both questions before continuing.');
+      showToast('Please complete both questions before continuing.', 'success');
       return;
     }
 
@@ -234,6 +272,7 @@ function bindEvents() {
     saveState();
     setScreen('dashboard');
     render();
+    showToast('Profile saved successfully!', 'success');
   });
 
   document.getElementById('continue-lesson-btn').addEventListener('click', () => {
@@ -282,10 +321,23 @@ function bindEvents() {
 
   document.getElementById('read-aloud-btn').addEventListener('click', readAloud);
 
-  document.getElementById('contrast-toggle').addEventListener('click', () => {
-    appState.settings.highContrast = !appState.settings.highContrast;
-    saveState();
-    render();
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const nextTheme = appState.theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    showToast(`Switched to ${nextTheme} mode`, 'success');
+  });
+
+  document.getElementById('fab-top').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('Scrolled to top', 'success');
+  });
+
+  document.getElementById('fab-chat').addEventListener('click', () => {
+    showToast('Ask AI is coming soon!', 'success');
+  });
+
+  document.getElementById('fab-contact').addEventListener('click', () => {
+    showToast('Contact support at support@example.com', 'success');
   });
 
   document.getElementById('profile-button').addEventListener('click', () => {
@@ -294,9 +346,22 @@ function bindEvents() {
   });
 }
 
-bindEvents();
-appState.profile = loadProfile();
-if (appState.profile) {
-  appState.currentScreen = 'dashboard';
+function initApp() {
+  appState = loadState();
+  bindEvents();
+  appState.profile = loadProfile();
+  if (appState.profile) {
+    appState.currentScreen = 'dashboard';
+    showToast('Welcome back!', 'success');
+  }
+  render();
+  initCardAnimations();
+  updateTopbar();
+  window.addEventListener('scroll', () => updateTopbar(window.scrollY));
 }
-render();
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}

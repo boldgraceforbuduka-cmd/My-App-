@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Adaptive Learning MVP</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="manifest" href="./manifest.json" />
   </head>
   <body>
     <div class="app-shell">
@@ -15,7 +15,7 @@
           <h1>Learning that adapts to the learner</h1>
         </div>
         <div class="topbar-actions">
-          <button id="contrast-toggle" class="secondary-btn">High Contrast: Off</button>
+          <button id="theme-toggle" class="secondary-btn">Theme: Light</button>
           <button id="profile-button" class="secondary-btn">Profile</button>
         </div>
       </header>
@@ -115,6 +115,12 @@
           </div>
         </section>
       </main>
+      <div class="fab-group" aria-label="Quick actions">
+        <button class="fab-btn" id="fab-chat">💬 Ask AI</button>
+        <button class="fab-btn" id="fab-top">⬆ Back to Top</button>
+        <button class="fab-btn" id="fab-contact">📞 Contact</button>
+      </div>
+      <div id="toast-container" class="toast-container" aria-live="polite"></div>
     </div>
 
     <script src="app.js"></script>
